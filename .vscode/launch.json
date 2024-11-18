@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "SandboxTraining",
+            "request": "launch",
+            "type": "al",
+            "tenant": "a8bbb64f-9fad-4ea1-9abe-297aed4238de",
+            "environmentType": "Sandbox",
+            "environmentName": "SandboxTraining",
+            "startupObjectId": 9305,
+            "startupObjectType": "Page",
+            "breakOnError": true,
+            "launchBrowser": true,
+            "enableLongRunningSqlStatements": true,
+            "enableSqlInformationDebugger": true,
+            "schemaUpdateMode": "Synchronize"
+        },        
+    ]
+}
