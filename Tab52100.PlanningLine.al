@@ -1,4 +1,4 @@
-table 50100 "KES Planning Line"
+table 52100 "KES Planning Line"
 {
     DataClassification = CustomerContent;
     LookupPageId = "KES Planning Lines";

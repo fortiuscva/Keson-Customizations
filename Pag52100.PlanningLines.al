@@ -1,4 +1,4 @@
-page 50100 "KES Planning Lines"
+page 52100 "KES Planning Lines"
 {
     ApplicationArea = All;
     Caption = 'Planning Lines';
