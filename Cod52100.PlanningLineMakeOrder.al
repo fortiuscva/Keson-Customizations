@@ -1,4 +1,4 @@
-codeunit 50100 "KES Planning Line Make Order"
+codeunit 52100 "KES Planning Line Make Order"
 {
     //TableNo = "KES Planning Line";
 
