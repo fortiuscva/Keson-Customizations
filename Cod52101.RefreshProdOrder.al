@@ -1,4 +1,4 @@
-codeunit 50101 "KES Refresh Prod. Order"
+codeunit 52101 "KES Refresh Prod. Order"
 {
     TableNo = "Production Order";
     trigger OnRun()
