@@ -37,10 +37,11 @@ report 52100 "KES Cal. Planning Lines"
                 PlanningLine."Total Qty." := Item.Inventory + Item."Qty. on Purch. Order" + Item."Qty. on Prod. Order";
                 PlanningLine."Last 12 Months" := GetLast12MonthsUsage(Item."No.");
                 PlanningLine."Previous 12 Months" := GetLast24MonthsUsage(Item."No.");
-                PlanningLine."Per Month Avg." := (PlanningLine."Last 12 Months" + PlanningLine."Previous 12 Months") / 2;
+                PlanningLine."Per Month Avg." := (PlanningLine."Last 12 Months" + PlanningLine."Previous 12 Months") / 24;
                 PlanningLine."Auto Create" := true;
+                PlanningLine."Replenishment System" := Item."Replenishment System";
+                PlanningLine."Ord. Coverage Date" := Round(PlanningLine."Total Qty." - (PlanningLine."Per Month Avg." * (CalculateMonthsDifference(CoverageDate))), 1);
                 PlanningLine.Modify();
-
             end;
         }
     }
@@ -85,7 +86,6 @@ report 52100 "KES Cal. Planning Lines"
         PlanningLine: Record "KES Planning Line";
         NewLineNo: Integer;
 
-
     procedure GetLast12MonthsUsage(ItemNo: Code[20]): Decimal
     var
         ItemLedgerEntry: Record "Item Ledger Entry";
@@ -115,5 +115,17 @@ report 52100 "KES Cal. Planning Lines"
         exit(ItemLedgerEntry.Quantity);
     end;
 
+    procedure CalculateMonthsDifference(CoverageDatePar: Date): Integer;
+    var
+        Year1, Month1, Year2, Month2 : Integer;
+    begin
+        // Get the year and month parts of the dates
+        Year1 := Date2DMY(Today, 3);
+        Month1 := Date2DMY(Today, 2);
+        Year2 := Date2DMY(CoverageDatePar, 3);
+        Month2 := Date2DMY(CoverageDatePar, 2);
 
+        // Calculate the difference in months
+        exit((Year2 - Year1) * 12 + (Month2 - Month1));
+    end;
 }
