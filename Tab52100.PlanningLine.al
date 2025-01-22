@@ -112,7 +112,6 @@ table 52100 "KES Planning Line"
         field(14; "Ord. Coverage Date"; Decimal)
         {
             Caption = 'Order Through Coverage Date';
-            DecimalPlaces = 0 : 5;
         }
         field(15; "Purch. Unit of Measure"; Code[10])
         {
