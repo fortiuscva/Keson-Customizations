@@ -49,11 +49,27 @@ page 52100 "KES Planning Lines"
                 {
                     ToolTip = 'Specifies the value of the Last 12 Month field.', Comment = '%';
                     Editable = false;
+                    trigger OnDrillDown()
+                    var
+                        KesFunctions: Codeunit "KES Functions";
+                        ItemLedgerEntry: Record "Item Ledger Entry";
+                    begin
+                        KesFunctions.SetValuesForGetLast12MonthsUsage(Rec."No.", Rec."Execution Date", ItemLedgerEntry);
+                        Page.Run(Page::"Item Ledger Entries", ItemLedgerEntry);
+                    end;
                 }
                 field("Previous 12 Months"; Rec."Previous 12 Months")
                 {
                     ToolTip = 'Specifies the value of the Previous 12 Month field.', Comment = '%';
                     Editable = false;
+                    trigger OnDrillDown()
+                    var
+                        KesFunctions: Codeunit "KES Functions";
+                        ItemLedgerEntry: Record "Item Ledger Entry";
+                    begin
+                        KesFunctions.SetValuesForGetLast24MonthsUsage(Rec."No.", Rec."Execution Date", ItemLedgerEntry);
+                        Page.Run(Page::"Item Ledger Entries", ItemLedgerEntry);
+                    end;
                 }
                 field("Per Month Avg."; Rec."Per Month Avg.")
                 {
@@ -88,11 +104,17 @@ page 52100 "KES Planning Lines"
             {
                 Caption = 'Calculate Planning Lines';
                 ApplicationArea = All;
-                RunObject = report "KES Cal. Planning Lines";
                 ToolTip = 'Executes the Calculate Planning Lines action.';
                 Image = Calculate;
                 Promoted = true;
                 PromotedCategory = Process;
+                trigger OnAction()
+                begin
+                    if not Confirm(CalcPlanningLinesQst, true) then
+                        exit;
+
+                    Report.Run(Report::"KES Cal. Planning Lines");
+                end;
             }
             action(FlagAll)
             {
@@ -106,6 +128,9 @@ page 52100 "KES Planning Lines"
                 var
                     PlanningLine: Record "KES Planning Line";
                 begin
+                    if not Confirm(FlagAllQst, true) then
+                        exit;
+
                     PlanningLine.Copy(Rec);
                     PlanningLine.ModifyAll("Accept Action Message", true);
                 end;
@@ -123,6 +148,9 @@ page 52100 "KES Planning Lines"
                 var
                     PlanningLine: Record "KES Planning Line";
                 begin
+                    if not Confirm(UnFlagAllQst, true) then
+                        exit;
+
                     PlanningLine.Copy(Rec);
                     PlanningLine.ModifyAll("Accept Action Message", false);
                 end;
@@ -138,7 +166,11 @@ page 52100 "KES Planning Lines"
                 var
                     PlanningLineMakeOrder: Codeunit "KES Planning Line Make Order";
                 begin
+                    if not Confirm(ProcessLinesQst, true) then
+                        exit;
+
                     PlanningLineMakeOrder.CreatePurchaseAndRelProdOrders(Rec);
+
                 end;
             }
         }
@@ -149,4 +181,10 @@ page 52100 "KES Planning Lines"
         Rec."Journal Batch Name" := 'Default';
         Rec.Type := Rec.Type::Item;
     end;
+
+    var
+        FlagAllQst: Label 'Do you want to continue Flag all planning lines?';
+        CalcPlanningLinesQst: Label 'Do you want to continue calculate the planning lines?';
+        UnFlagAllQst: Label 'Do you want to continue UnFlag all planning lines?';
+        ProcessLinesQst: Label 'Do you want to continue Process the planning lines?';
 }
