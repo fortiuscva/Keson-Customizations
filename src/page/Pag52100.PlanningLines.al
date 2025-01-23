@@ -48,14 +48,17 @@ page 52100 "KES Planning Lines"
                 field("Last 12 Months"; Rec."Last 12 Months")
                 {
                     ToolTip = 'Specifies the value of the Last 12 Month field.', Comment = '%';
+                    Editable = false;
                 }
                 field("Previous 12 Months"; Rec."Previous 12 Months")
                 {
                     ToolTip = 'Specifies the value of the Previous 12 Month field.', Comment = '%';
+                    Editable = false;
                 }
                 field("Per Month Avg."; Rec."Per Month Avg.")
                 {
                     ToolTip = 'Specifies the value of the Per Month Avg. field.';
+                    Editable = false;
                 }
                 field("Purch. Unit of Measure"; Rec."Purch. Unit of Measure")
                 {
@@ -64,6 +67,7 @@ page 52100 "KES Planning Lines"
                 field("Auto Create"; Rec."Auto Create")
                 {
                     ToolTip = 'Specifies the value of the Auto Create field.', Comment = '%';
+                    Visible = false;
                 }
                 field("Ord. Coverage Date"; Rec."Ord. Coverage Date")
                 {
