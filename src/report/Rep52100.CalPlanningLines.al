@@ -94,6 +94,8 @@ report 52100 "KES Cal. Planning Lines"
     begin
         StartDate := CalcDate('-1Y', Today);
         EndDate := Today;
+        ItemLedgerEntry.SetCurrentKey("Entry Type", "Item No.", "Variant Code", "Source Type", "Source No.", "Posting Date");
+        ItemLedgerEntry.SetFilter("Entry Type", '%1|%2', ItemLedgerEntry."Entry Type"::Sale, ItemLedgerEntry."Entry Type"::Consumption);
         ItemLedgerEntry.SetRange("Item No.", ItemNo);
         ItemLedgerEntry.SetRange("Posting Date", StartDate, EndDate);
         ItemLedgerEntry.CalcSums(ItemLedgerEntry.Quantity);
@@ -108,7 +110,8 @@ report 52100 "KES Cal. Planning Lines"
     begin
         EndDate := CalcDate('-1Y', Today);
         StartDate := CalcDate('-1Y', EndDate);  //StartDate := CalcDate('-2Y', EndDate);
-
+        ItemLedgerEntry.SetCurrentKey("Entry Type", "Item No.", "Variant Code", "Source Type", "Source No.", "Posting Date");
+        ItemLedgerEntry.SetFilter("Entry Type", '%1|%2', ItemLedgerEntry."Entry Type"::Sale, ItemLedgerEntry."Entry Type"::Consumption);
         ItemLedgerEntry.SetRange("Item No.", ItemNo);
         ItemLedgerEntry.SetRange("Posting Date", StartDate, EndDate);
         ItemLedgerEntry.CalcSums(ItemLedgerEntry.Quantity);
