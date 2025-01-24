@@ -144,6 +144,11 @@ table 52100 "KES Planning Line"
         {
             Caption = 'Per Month Avg.';
         }
+        field(24; "Execution Date"; Date)
+        {
+            Editable = false;
+        }
+
     }
     keys
     {
