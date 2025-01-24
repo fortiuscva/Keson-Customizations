@@ -35,12 +35,13 @@ report 52100 "KES Cal. Planning Lines"
                 PlanningLine."Qty. on Purch. Order" := Item."Qty. on Purch. Order";
                 PlanningLine."Qty. on Prod. Order" := Item."Qty. on Prod. Order";
                 PlanningLine."Total Qty." := Item.Inventory + Item."Qty. on Purch. Order" + Item."Qty. on Prod. Order";
-                PlanningLine."Last 12 Months" := GetLast12MonthsUsage(Item."No.");
-                PlanningLine."Previous 12 Months" := GetLast24MonthsUsage(Item."No.");
+                PlanningLine."Last 12 Months" := KesFunctions.GetLast12MonthsUsage(Item."No.", StartingDate) * -1;
+                PlanningLine."Previous 12 Months" := KesFunctions.GetLast24MonthsUsage(Item."No.", StartingDate) * -1;
                 PlanningLine."Per Month Avg." := (PlanningLine."Last 12 Months" + PlanningLine."Previous 12 Months") / 24;
                 PlanningLine."Auto Create" := true;
                 PlanningLine."Replenishment System" := Item."Replenishment System";
-                PlanningLine."Ord. Coverage Date" := Round(PlanningLine."Total Qty." - (PlanningLine."Per Month Avg." * (CalculateMonthsDifference(CoverageDate))), 1);
+                PlanningLine."Ord. Coverage Date" := Round(PlanningLine."Total Qty." - (PlanningLine."Per Month Avg." * (KesFunctions.CalculateMonthsDifference(CoverageDate, StartingDate))), 1);
+                PlanningLine."Execution Date" := StartingDate;
                 PlanningLine.Modify();
             end;
         }
@@ -62,6 +63,7 @@ report 52100 "KES Cal. Planning Lines"
                     field(EndingDate; EndingDate)
                     {
                         Caption = 'Ending Date';
+                        Visible = false;
                         ApplicationArea = All;
                     }
                     field(CoverageDate; CoverageDate)
@@ -72,63 +74,25 @@ report 52100 "KES Cal. Planning Lines"
                 }
             }
         }
+
+
         actions
         {
             area(Processing)
             {
             }
         }
+        trigger OnOpenPage()
+        begin
+            StartingDate := Today;
+        end;
     }
+
     var
         StartingDate: Date;
         EndingDate: Date;
         CoverageDate: Date;
         PlanningLine: Record "KES Planning Line";
         NewLineNo: Integer;
-
-    procedure GetLast12MonthsUsage(ItemNo: Code[20]): Decimal
-    var
-        ItemLedgerEntry: Record "Item Ledger Entry";
-        StartDate: Date;
-        EndDate: Date;
-    begin
-        StartDate := CalcDate('-1Y', Today);
-        EndDate := Today;
-        ItemLedgerEntry.SetCurrentKey("Entry Type", "Item No.", "Variant Code", "Source Type", "Source No.", "Posting Date");
-        ItemLedgerEntry.SetFilter("Entry Type", '%1|%2', ItemLedgerEntry."Entry Type"::Sale, ItemLedgerEntry."Entry Type"::Consumption);
-        ItemLedgerEntry.SetRange("Item No.", ItemNo);
-        ItemLedgerEntry.SetRange("Posting Date", StartDate, EndDate);
-        ItemLedgerEntry.CalcSums(ItemLedgerEntry.Quantity);
-        exit(ItemLedgerEntry.Quantity);
-    end;
-
-    procedure GetLast24MonthsUsage(ItemNo: Code[20]): Decimal
-    var
-        ItemLedgerEntry: Record "Item Ledger Entry";
-        StartDate: Date;
-        EndDate: Date;
-    begin
-        EndDate := CalcDate('-1Y', Today);
-        StartDate := CalcDate('-1Y', EndDate);  //StartDate := CalcDate('-2Y', EndDate);
-        ItemLedgerEntry.SetCurrentKey("Entry Type", "Item No.", "Variant Code", "Source Type", "Source No.", "Posting Date");
-        ItemLedgerEntry.SetFilter("Entry Type", '%1|%2', ItemLedgerEntry."Entry Type"::Sale, ItemLedgerEntry."Entry Type"::Consumption);
-        ItemLedgerEntry.SetRange("Item No.", ItemNo);
-        ItemLedgerEntry.SetRange("Posting Date", StartDate, EndDate);
-        ItemLedgerEntry.CalcSums(ItemLedgerEntry.Quantity);
-        exit(ItemLedgerEntry.Quantity);
-    end;
-
-    procedure CalculateMonthsDifference(CoverageDatePar: Date): Integer;
-    var
-        Year1, Month1, Year2, Month2 : Integer;
-    begin
-        // Get the year and month parts of the dates
-        Year1 := Date2DMY(Today, 3);
-        Month1 := Date2DMY(Today, 2);
-        Year2 := Date2DMY(CoverageDatePar, 3);
-        Month2 := Date2DMY(CoverageDatePar, 2);
-
-        // Calculate the difference in months
-        exit((Year2 - Year1) * 12 + (Month2 - Month1));
-    end;
+        KesFunctions: Codeunit "KES Functions";
 }
